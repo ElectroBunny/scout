@@ -61,7 +61,7 @@ document.querySelector('form').addEventListener('submit', function(event) {
   // Send the request asynchronously
   // the body should be an json with key value pairs
   console.log(event.target.action);
-  fetch("https://courageous-cyan-robe.cyclic.app/", {
+  fetch("/", {
     method: 'POST',
     body: JSON.stringify(formFields),
     headers: {
@@ -90,11 +90,12 @@ document.querySelector('form').addEventListener('submit', function(event) {
   // Generate QR code if there is an error print it to the console
   qrText = valuesString;
 
-  if (qrText.length < 200) {
+  if (qrText.length < 221 && qrText.length > 180)  {
     // add " " to the qr code at least 200 characters
     qrText = qrText + " ".repeat(200 - qrText.length);
+    console.log(qrText);
   }
-  
+
   // split the qr into two qr codes
   QRCode1.makeCode(qrText.substring(0, qrText.length));
 
