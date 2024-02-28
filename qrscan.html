@@ -30,11 +30,13 @@
 <body>
         <br>
         <div class="container">
+                <label for="server-ip">Server IP:</label>
+                <input type="text" id="server-ip" name="server-ip">
                 <button class="button" id="scan">Scan QR Code</button>
 
                 <div style="width: 500px" id="reader"></div>
 
-                <p id="text"></p>
+                <input type="text" id="text" placeholder="Enter text" style="font-size: 15px; height: 200px; width: 500px;">    
 
                 <button class="button" id="send">Send</button>
                 <button class="button" onclick="deleteText()">Delete</button>
@@ -44,14 +46,14 @@
 <script src="./readqr.js"></script>
 <script>
         var html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", { fps: 10, qrbox: 200 });
+                "reader", { fps: 10, qrbox: 250 });
 
         function good_scan(qrCodeMessage) {
                 html5QrcodeScanner.clear();
                 //get the text in the "text" paragraph
                 var text = document.getElementById("text").textContent;
                 // append the the "text" paragraph and set the innerHTML to the decoded message
-                document.getElementById("text").innerHTML = text + "<br>" + qrCodeMessage;
+                document.getElementById("text").innerHTML = text + qrCodeMessage;
         }
         function deleteText() {
                 document.getElementById("text").innerHTML = "";
@@ -65,15 +67,29 @@
                 for (let i = 0; i < valuesArray.length; i++) {
                     jsonObj[i + 1] = valuesArray[i];
                 }
-                fetch('/', {
+                // get the server ip from the input
+                let serverIp = document.getElementById("server-ip").value;
+                if (serverIp === "") {
+                    serverIp = "localhost";
+                } else if (serverIp === "/") {
+                    serverIp = "/";
+                } else {
+                    serverIp = `http://${serverIp}/`;
+                }
+
+                fetch(serverIp, {
                   method: 'POST',
                   body: JSON.stringify(jsonObj),
                   headers: {
                   'Content-Type': 'application/json'
                   }
+                
                 }).catch(function(error) {
                 console.error('Error:', error);
-                }); 
+                }).finally(function() {
+                        console.log('Success');
+                        deleteText();
+                });
         }
 
         function onScanFailure(error) {
@@ -88,9 +104,7 @@
 
         document.getElementById("send").addEventListener("click", function() {
                 // get the text in the "text" paragraph
-                var text = document.getElementById("text").textContent;
-                //remove all the <br> tags and replace them with ""
-                var text = text.replace(/<br>/g, "");
+                var text = document.getElementById("text").value;
                 onScanSuccess(text);
         });
 </script>

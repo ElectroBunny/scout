@@ -61,7 +61,7 @@ document.querySelector('form').addEventListener('submit', function(event) {
   // Send the request asynchronously
   // the body should be an json with key value pairs
   console.log(event.target.action);
-  fetch(event.target.action, {
+  fetch("https://courageous-cyan-robe.cyclic.app/", {
     method: 'POST',
     body: JSON.stringify(formFields),
     headers: {
@@ -99,10 +99,18 @@ document.querySelector('form').addEventListener('submit', function(event) {
   for (var j = 0; j < inputs.length; j++) {
     if (inputs[j].readOnly) {
       inputs[j].value = 0;
-    } else {
+    } else if (inputs[j].type == "checkbox") {
+      inputs[j].checked = false;
+      AbsentCheckHidden.value = AbsentCheck.checked ? 'TRUE' : 'FALSE';
+      LeftWingCheckHidden.value = LeftWingCheck.checked ? 'TRUE' : 'FALSE';
+      DroppedNotesCheckHidden.value = DroppedNotesCheck.checked ? 'TRUE' : 'FALSE';
+    }
+    else {
       inputs[j].value = "";
     }
   }
+
+  toggleSubmitButton();
 
 
 });
@@ -216,6 +224,13 @@ const LeftWingCheckHidden = document.getElementById('LeftWing');
 
 LeftWingCheck.addEventListener('change', function() {
   LeftWingCheckHidden.value = this.checked ? 'TRUE' : 'FALSE';
+});
+
+const DroppedNotesCheck = document.getElementById('DroppedNotes');
+const DroppedNotesCheckHidden = document.getElementById('DroppedNotesC');
+
+DroppedNotesCheck.addEventListener('change', function() {
+  DroppedNotesCheckHidden.value = this.checked ? 'TRUE' : 'FALSE';
 });
 
 // const DefenseCheck = document.getElementById('Defense');
@@ -345,4 +360,8 @@ function getMatch(matchKey) {
 window.onload = function () {
   getTeams("2023week0");
   getSchedule("2023week0");
+  AbsentCheckHidden.value = AbsentCheck.checked ? 'TRUE' : 'FALSE';
+  LeftWingCheckHidden.value = LeftWingCheck.checked ? 'TRUE' : 'FALSE';
+  DroppedNotesCheckHidden.value = DroppedNotesCheck.checked ? 'TRUE' : 'FALSE';
+  toggleSubmitButton();
 };
